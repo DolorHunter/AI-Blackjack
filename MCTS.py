@@ -1,35 +1,69 @@
 import numpy as np
+import copy
 from Blackjack import *
 
 
+# 1 for player win; -1 for dealer win; 0 for tie
 def score(state):
     p, dealer, player = state
-    if not player._is_alive or player._is_stop and player.point < dealer.point:
+    print(dealer.point, player.point)
+    if not player._is_alive:
         return -1
-    elif player._is_stop and player.point > dealer.point:
+    if not dealer._is_alive:
         return 1
+
+    if player._is_stop and dealer._is_stop:
+        if player.point > dealer.point:
+            return 1
+        elif player.point < dealer.point:
+            return -1
+        else:
+            return 0
     return 0
 
 def get_player(state):
     p, dealer, player = state
-    return player.is_alive and not player.is_stop  # true->player, false->dealer
+    p._turn = not p._turn
+    return p._turn  # true->player, false->dealer
 
 
 def children_of(state):
     p, dealer, player = state
     children = []
-    if get_player(state):  # Hit
+    if get_player(state):
         if player.point <= BLASTPOINT:
-            player.get(p.next)
-            children.append((p, dealer, player))
+            # Hit
+            cp_state = copy.deepcopy(state)
+            cp_p, cp_dealer, cp_player = cp_state
+            cp_player.get(cp_p.next)
+            children.append((cp_p, cp_dealer, cp_player))
+            # Stop
+            cp_state = copy.deepcopy(state)
+            cp_p, cp_dealer, cp_player = cp_state
+            cp_player._stop = True
+            children.append((cp_p, cp_dealer, cp_player))
         else:
-            player._is_alive = False
+            cp_state = copy.deepcopy(state)
+            cp_p, cp_dealer, cp_player = cp_state
+            cp_player._is_alive = False
+            children.append((cp_p, cp_dealer, cp_player))
     else:
         if dealer.point <= BLASTPOINT:
-            dealer.get(p.next)
-            children.append((p, dealer, player))
+            # Hit
+            cp_state = copy.deepcopy(state)
+            cp_p, cp_dealer, cp_player = cp_state
+            cp_dealer.get(cp_p.next)
+            children.append((cp_p, cp_dealer, cp_player))
+            # Stop
+            cp_state = copy.deepcopy(state)
+            cp_p, cp_dealer, cp_player = cp_state
+            cp_dealer._stop = True
+            children.append((cp_p, cp_dealer, cp_player))
         else:
-            dealer._is_alive = False
+            cp_state = copy.deepcopy(state)
+            cp_p, cp_dealer, cp_player = cp_state
+            cp_dealer._is_alive = False
+            children.append((cp_p, cp_dealer, cp_player))
     return children
 
 

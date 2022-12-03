@@ -31,6 +31,7 @@ class Poker(object):
                        for suite in '♠♥♣♦'
                        for face in list(range(2, 11)) + ['A', 'J', 'Q', 'K']]
         self._current = 0
+        self._turn = True
 
     @property
     def cards(self):
