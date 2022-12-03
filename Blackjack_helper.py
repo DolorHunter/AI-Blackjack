@@ -122,52 +122,15 @@ def initial_state(p, dealer, player):
     return p, dealer, player
 
 
-
-def main():
-    p = Poker()
-    p.shuffle()
-    dealer = Player()
-    player = Player()
-
-    initial_state(p, dealer, player)
-    print('dealer： %s' % dealer.str_cards_on_hand)
-    print('playerhand： %s' % player.str_cards_on_hand)
-
-    while True:
-        
-        choice = input('action：\n Hit(H) Stop(S) \n')
-        if choice == 'H':
-            player.get(p.next)
-            print('Get%s On hands\n %s' % (player.cards_on_hand[-1], player.str_cards_on_hand))
-      
-        elif choice == 'S':
-            player.stop()
-            print('Stop')
-            break
-        else:
-            print('Error')
-        if player.is_alive is False:
-            break
-
-    if player.is_alive:
-        
-        
-        while dealer.point < DEALERBLAST:
-            dealer.get(p.next)
-            print('Dealer draw%s, Dealer hand\n %s' % (dealer.cards_on_hand[-1], dealer.str_cards_on_hand))
-        if dealer.is_alive:
-            print('Dealer point：%s \n player point：%s' % (dealer.point_count(), player.point_count()))
-            if dealer.point_count() > player.point_count():
-                print('Dealer win')
-            elif dealer.point_count() < player.point_count():
-                print('Player win')
-            else:
-                print('tie')
-        else:
-            print('Dealer blast, Player win ')
+def choice(poker, player, is_dealer):
+    role = 'Dealer' if is_dealer else 'Player'
+    inp = input(role + ' action：\n Hit(H) Stop(S) \n')
+    if inp == 'H':
+        player.get(poker.next)
+        print(role + ' get %s On hands\n %s' % (player.cards_on_hand[-1], player.str_cards_on_hand))
+    elif inp == 'S':
+        player._is_stop = True
+        print(role + ' stop')
     else:
-        print('Player Blast , Dealer win')
-
-
-if __name__ == '__main__':
-    main()
+        print(role + ' error')
+        choice(poker, player, is_dealer)
