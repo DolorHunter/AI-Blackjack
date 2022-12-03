@@ -43,7 +43,6 @@ class Poker(object):
 
     @property
     def next(self):
-        
         card = self._cards[self._current]
         self._current += 1
         return card
@@ -60,6 +59,7 @@ class Player(object):
         self._cards_on_hand = []
         self._point = 0
         self._is_alive = True
+        self._is_stop = False
 
     @property
     def name(self):
@@ -76,6 +76,10 @@ class Player(object):
     @property
     def is_alive(self):
         return self._is_alive
+
+    @property
+    def is_stop(self):
+        return self._is_stop
 
     @property
     def str_cards_on_hand(self):
@@ -114,8 +118,6 @@ def initial_state(p, dealer, player):
     dealer.get(p.next)
     player.get(p.next)
     player.get(p.next)
-    print('dealer： %s' % dealer.str_cards_on_hand)
-    print('playerhand： %s' % player.str_cards_on_hand)
     return p, dealer, player
 
 
@@ -127,6 +129,8 @@ def main():
     player = Player()
 
     initial_state(p, dealer, player)
+    print('dealer： %s' % dealer.str_cards_on_hand)
+    print('playerhand： %s' % player.str_cards_on_hand)
 
     while True:
         
@@ -136,6 +140,7 @@ def main():
             print('Get%s On hands\n %s' % (player.cards_on_hand[-1], player.str_cards_on_hand))
       
         elif choice == 'S':
+            player.stop()
             print('Stop')
             break
         else:
