@@ -1,15 +1,15 @@
 import copy
-
 import numpy as np
 from Blackjack import *
 
 
 def score(state):
-    p, dealer, player = state
-    if get_player(state):
-        return player.point_count()
+    if player._is_alive and player.point > dealer.point:
+        return 1
+    elif player._is_alive and player.point == dealer.point:
+        return 0
     else:
-        return dealer.point_count()
+        return -1
 
 def get_player(state):
     p, dealer, player = state
@@ -17,21 +17,21 @@ def get_player(state):
 
 
 def children_of(state):
+    p, dealer, player = state
+    children = []
     if get_player(state):  # Hit
         if player.point <= BLASTPOINT:
-            player.get(p.next)
-            #print('Get%s On hands\n %s Points: %d' % (player.cards_on_hand[-1], player.str_cards_on_hand, player.point_count()))
-        else:
-            player._is_alive = False
-            #print('Player Lose.\n %s Points: %d' % (player.str_cards_on_hand, player.point_count()))
+            child = copy.deepcopy(state)
+            p2, dealer2, player2 = child
+            player2.get(p2.next)
+            children.append(child)
     else:
-        if dealer.point < DEALERBLAST:
-            dealer.get(p.next)
-            #print('Dealer point：%s \n player point：%s' % (dealer.point_count(), player.point_count()))
-        else:
-            dealer._is_stop = True
-            #print('Player Stop.\n %s Points: %d' % (player.str_cards_on_hand, player.point_count()))
-    return p, dealer, player
+        if dealer.point <= BLASTPOINT:
+            child = copy.deepcopy(state)
+            p2, dealer2, player2 = child
+            dealer2.get(p2.next)
+            children.append(child)
+    return children
 
 
 def is_leaf(state):
