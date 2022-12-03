@@ -1,15 +1,14 @@
-import copy
 import numpy as np
 from Blackjack import *
 
 
 def score(state):
-    if player._is_alive and player.point > dealer.point:
-        return 1
-    elif player._is_alive and player.point == dealer.point:
-        return 0
-    else:
+    p, dealer, player = state
+    if not player._is_alive or player._is_stop and player.point < dealer.point:
         return -1
+    elif player._is_stop and player.point > dealer.point:
+        return 1
+    return 0
 
 def get_player(state):
     p, dealer, player = state
@@ -21,23 +20,23 @@ def children_of(state):
     children = []
     if get_player(state):  # Hit
         if player.point <= BLASTPOINT:
-            child = copy.deepcopy(state)
-            p2, dealer2, player2 = child
-            player2.get(p2.next)
-            children.append(child)
+            player.get(p.next)
+            children.append((p, dealer, player))
+        else:
+            player._is_alive = False
     else:
         if dealer.point <= BLASTPOINT:
-            child = copy.deepcopy(state)
-            p2, dealer2, player2 = child
-            dealer2.get(p2.next)
-            children.append(child)
+            dealer.get(p.next)
+            children.append((p, dealer, player))
+        else:
+            dealer._is_alive = False
     return children
 
 
 def is_leaf(state):
     children = children_of(state)
     value = score(state)
-    return not children or value != 0
+    return len(children) == 0 or value != 0
 
 
 # MCTS to solve tic-tac-toe
