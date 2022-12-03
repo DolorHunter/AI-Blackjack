@@ -1,16 +1,17 @@
 import numpy as np
 import copy
-from Blackjack import *
+from Blackjack_helper import *
 
 
 # 1 for player win; -1 for dealer win; 0 for tie
 def score(state):
     p, dealer, player = state
-    print(dealer.point, player.point)
-    if not player._is_alive:
-        return -1
+    #print(player.point, player.str_cards_on_hand)
+    #print(dealer.point, dealer.str_cards_on_hand)
     if not dealer._is_alive:
         return 1
+    if not player._is_alive:
+        return -1
 
     if player._is_stop and dealer._is_stop:
         if player.point > dealer.point:
@@ -28,40 +29,34 @@ def get_player(state):
 
 
 def children_of(state):
-    p, dealer, player = state
     children = []
+    state = copy.deepcopy(state)
     if get_player(state):
         if player.point <= BLASTPOINT:
             # Hit
-            cp_state = copy.deepcopy(state)
-            cp_p, cp_dealer, cp_player = cp_state
+            cp_p, cp_dealer, cp_player = copy.deepcopy(state)
             cp_player.get(cp_p.next)
             children.append((cp_p, cp_dealer, cp_player))
             # Stop
-            cp_state = copy.deepcopy(state)
-            cp_p, cp_dealer, cp_player = cp_state
-            cp_player._stop = True
+            cp_p, cp_dealer, cp_player = copy.deepcopy(state)
+            cp_dealer._stop = True
             children.append((cp_p, cp_dealer, cp_player))
         else:
-            cp_state = copy.deepcopy(state)
-            cp_p, cp_dealer, cp_player = cp_state
+            cp_p, cp_dealer, cp_player = copy.deepcopy(state)
             cp_player._is_alive = False
             children.append((cp_p, cp_dealer, cp_player))
     else:
         if dealer.point <= BLASTPOINT:
             # Hit
-            cp_state = copy.deepcopy(state)
-            cp_p, cp_dealer, cp_player = cp_state
+            cp_p, cp_dealer, cp_player = copy.deepcopy(state)
             cp_dealer.get(cp_p.next)
             children.append((cp_p, cp_dealer, cp_player))
             # Stop
-            cp_state = copy.deepcopy(state)
-            cp_p, cp_dealer, cp_player = cp_state
+            cp_p, cp_dealer, cp_player = copy.deepcopy(state)
             cp_dealer._stop = True
             children.append((cp_p, cp_dealer, cp_player))
         else:
-            cp_state = copy.deepcopy(state)
-            cp_p, cp_dealer, cp_player = cp_state
+            cp_p, cp_dealer, cp_player = copy.deepcopy(state)
             cp_dealer._is_alive = False
             children.append((cp_p, cp_dealer, cp_player))
     return children
@@ -70,7 +65,7 @@ def children_of(state):
 def is_leaf(state):
     children = children_of(state)
     value = score(state)
-    return len(children) == 0 or value != 0
+    return len(children) == 1 or value != 0
 
 
 # MCTS to solve tic-tac-toe
@@ -155,7 +150,7 @@ if __name__ == "__main__":
     state = initial_state(p, dealer, player)
 
     # gauge sub-optimality with rollouts
-    num_rollouts = 10000 # TODO: vary
+    num_rollouts = 1000 # TODO: vary
     node = Node(state)
     for r in range(num_rollouts):
         rollout(node)
