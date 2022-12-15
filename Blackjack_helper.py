@@ -1,7 +1,5 @@
 import random
 
-BLASTPOINT = 21
-DEALERBLAST = 17
 
 class Card(object):
     # 1 card
@@ -56,11 +54,12 @@ class Poker(object):
 
 class Player(object):
 
-    def __init__(self):
+    def __init__(self, blast_point):
         self._cards_on_hand = []
         self._point = 0
         self._is_alive = True
         self._is_stop = False
+        self._blast_point = blast_point
 
     @property
     def name(self):
@@ -100,9 +99,9 @@ class Player(object):
                 k_count = int(k.face)
             self._point += k_count
         if has_ace is True:
-            if self._point + 10 <= BLASTPOINT:
+            if self._point + 10 <= self._blast_point:
                 self._point = self._point + 10
-        if self.point > BLASTPOINT:
+        if self.point > self._blast_point:
             self._is_alive = False
         return self._point
 
@@ -120,17 +119,3 @@ def initial_state(p, dealer, player):
     player.get(p.next)
     player.get(p.next)
     return p, dealer, player
-
-
-def choice(poker, player, is_dealer):
-    role = 'Dealer' if is_dealer else 'Player'
-    inp = input(role + ' action：\n Hit(H) Stop(S) \n')
-    if inp == 'H':
-        player.get(poker.next)
-        print(role + ' get %s On hands\n %s' % (player.cards_on_hand[-1], player.str_cards_on_hand))
-    elif inp == 'S':
-        player._is_stop = True
-        print(role + ' stop')
-    else:
-        print(role + ' error')
-        choice(poker, player, is_dealer)

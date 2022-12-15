@@ -1,43 +1,16 @@
 from Blackjack_helper import *
 
 
-def main():
-    p = Poker()
-    p.shuffle()
-    dealer = Player()
-    player = Player()
-
-    initial_state(p, dealer, player)
-    print('dealer： %s' % dealer.str_cards_on_hand)
-    print('playerhand： %s' % player.str_cards_on_hand)
-
-    while player.is_alive and dealer.is_alive:
-        if not player.is_stop and p._turn:
-            choice(p, player, False)
-            p._turn = not p._turn
-        elif not dealer.is_stop:
-            choice(p, dealer, True)
-            p._turn = not p._turn
-        else:
-            # cmp
-            print('Dealer point：%s \n Player point：%s' % (dealer.point_count(), player.point_count()))
-            if dealer.point_count() > player.point_count():
-                print('Dealer win')
-                return 0
-            elif dealer.point_count() < player.point_count():
-                print('Player win')
-                return 1
-            else:
-                print('Tie')
-                return 0
+def manual(poker, player, dealer, is_dealer):
+    role = 'Dealer' if is_dealer else 'Player'
+    cur_player = player if not is_dealer else dealer
+    inp = input(role + ' action：\n Hit(H) Stop(S) \n')
+    if inp == 'H':
+        cur_player.get(poker.next)
+        print(role + ' get %s On hands\n %s' % (player.cards_on_hand[-1], player.str_cards_on_hand))
+    elif inp == 'S':
+        cur_player._is_stop = True
+        print(role + ' stop')
     else:
-        if not player.is_alive:
-            print('Player Blast , Dealer win')
-            return -1
-        else:
-            print('Dealer blast, Player win ')
-            return 1
-
-
-if __name__ == '__main__':
-    main()
+        print(role + ' error')
+        manual(poker, player, dealer, is_dealer)
