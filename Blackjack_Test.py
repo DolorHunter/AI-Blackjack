@@ -16,8 +16,6 @@ STRATEGY_HEADER = ["manual", "baseline", "MCTS", "NN"]
 def main():
     inp = input("Input Blast Point (defalut 21): ")
     blast_point = int(inp) if inp else BLASTPOINT
-    inp = input("Input Number of Test (defalut 21): ")
-    num_test = int(inp) if inp else NUM_TEST
 
     # combination of each strategy
     strategies = list(itertools.combinations([i for i in range(4)], 2))
@@ -31,7 +29,7 @@ def main():
         dealer_win_ct, player_win_ct = 0, 0
         dealer_win_rate, player_win_rate = [], []
 
-        for i in range(num_test):
+        for i in range(NUM_TEST):
             ret = run_game(blast_point, player_stategy, dealer_stategy, silence_mode=True, is_auto=True)
             if ret == 1:
                 dealer_win_ct += 1

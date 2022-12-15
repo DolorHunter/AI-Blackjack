@@ -2,25 +2,21 @@ import numpy as np
 import copy
 from Blackjack_helper import *
 
-
-# 1 for player win; -1 for dealer win; 0 for tie
+# 1 for dealer win; -1 for player win
 def score(state):
     p, dealer, player = state
-    #print(player.point, player.str_cards_on_hand)
-    #print(dealer.point, dealer.str_cards_on_hand)
-    if not dealer._is_alive:
-        return 1
     if not player._is_alive:
+        return 1
+    if not dealer._is_alive:
         return -1
 
     if player._is_stop and dealer._is_stop:
-        if player.point > dealer.point:
-            return 1
-        elif player.point < dealer.point:
+        if player.point <= dealer.point:
             return -1
         else:
-            return 0
+            return 1
     return 0
+
 
 def get_player(state):
     p, dealer, player = state
@@ -30,34 +26,33 @@ def get_player(state):
 
 def children_of(state):
     children = []
-    state = copy.deepcopy(state)
-    if get_player(state):
-        if player.point <= BLASTPOINT:
-            # Hit
-            cp_p, cp_dealer, cp_player = copy.deepcopy(state)
-            cp_player.get(cp_p.next)
-            children.append((cp_p, cp_dealer, cp_player))
+    cp_state = copy.deepcopy(state)
+    p, dealer, player = cp_state
+    if get_player(cp_state):
+        if dealer.point <= dealer._blast_point:
+            if not dealer._is_stop:
+                # Hit
+                cp_p, cp_dealer, cp_player = copy.deepcopy(cp_state)
+                cp_dealer.get(cp_p.next)
+                cp_dealer._action = 'H'
+                children.append((cp_p, cp_dealer, cp_player))
             # Stop
-            cp_p, cp_dealer, cp_player = copy.deepcopy(state)
-            cp_dealer._stop = True
-            children.append((cp_p, cp_dealer, cp_player))
-        else:
-            cp_p, cp_dealer, cp_player = copy.deepcopy(state)
-            cp_player._is_alive = False
+            cp_p, cp_dealer, cp_player = copy.deepcopy(cp_state)
+            cp_dealer._is_stop = True
+            cp_dealer._action = 'S'
             children.append((cp_p, cp_dealer, cp_player))
     else:
-        if dealer.point <= BLASTPOINT:
-            # Hit
-            cp_p, cp_dealer, cp_player = copy.deepcopy(state)
-            cp_dealer.get(cp_p.next)
-            children.append((cp_p, cp_dealer, cp_player))
+        if player.point <= player._blast_point:
+            if not player._is_stop:
+                # Hit
+                cp_p, cp_dealer, cp_player = copy.deepcopy(cp_state)
+                cp_player.get(cp_p.next)
+                cp_player._action = 'H'
+                children.append((cp_p, cp_dealer, cp_player))
             # Stop
-            cp_p, cp_dealer, cp_player = copy.deepcopy(state)
-            cp_dealer._stop = True
-            children.append((cp_p, cp_dealer, cp_player))
-        else:
-            cp_p, cp_dealer, cp_player = copy.deepcopy(state)
-            cp_dealer._is_alive = False
+            cp_p, cp_dealer, cp_player = copy.deepcopy(cp_state)
+            cp_player._is_stop = True
+            cp_player._action = 'S'
             children.append((cp_p, cp_dealer, cp_player))
     return children
 
@@ -65,7 +60,7 @@ def children_of(state):
 def is_leaf(state):
     children = children_of(state)
     value = score(state)
-    return len(children) == 1 or value != 0
+    return len(children) == 0 or value != 0
 
 
 # MCTS to solve tic-tac-toe
@@ -77,6 +72,7 @@ class Node:
         self.score_total = 0
         self.score_estimate = 0
         self.child_list = None
+        self.action = None
 
     def children(self):
         # Only generate children the first time they are requested and memoize
@@ -140,12 +136,50 @@ def rollout(node):
     return result
 
 
+def rollout2(node, is_dealer):
+    if is_leaf(node.state):
+        result = score(node.state)
+    else:
+        best_child = choose_child(node)
+        result = rollout(best_child)
+    node.visit_count += 1
+    node.score_total += result
+    # cur_player's score always convergence to +1
+    if is_dealer:
+        node.score_estimate = node.score_total / node.visit_count
+    else:
+        node.score_estimate = (-1)*node.score_total / node.visit_count
+    cur_player_index = 1 if is_dealer else 2
+    node.action = best_child.state[cur_player_index]._action
+    return result, node.action
+
+
+def MCTS(poker, player, dealer, is_dealer, is_auto):
+    role = 'Dealer' if is_dealer else 'Player'
+    cur_player = player if not is_dealer else dealer
+    state = poker, dealer, player
+
+    node = Node(state)
+    num_rollouts = 1000
+    for r in range(num_rollouts):
+        rollout2(node, is_dealer)
+        #if r % (num_rollouts // 10) == 0: print(node.score_estimate, node.action)
+
+    if node.action == 'H':
+        cur_player.get(poker.next)
+        print(role + ' get %s On hands\n %s' % (cur_player.cards_on_hand[-1],
+                                                cur_player.str_cards_on_hand))
+    else:
+        cur_player._is_stop = True
+        print(role + ' stop')
+
+
 # TODO: increase number of rollouts to see effect on accuracy
 if __name__ == "__main__":
     p = Poker()
     p.shuffle()
-    dealer = Player()
-    player = Player()
+    dealer = Player(21)
+    player = Player(21)
 
     state = initial_state(p, dealer, player)
 
