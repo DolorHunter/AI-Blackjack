@@ -9,6 +9,7 @@ from Blackjack_NN import *
 BLASTPOINT = 21
 STRATEGY = [manual, baseline, MCTS, NN]
 
+
 def main():
     inp = input("Input Blast Point (defalut 21): ")
     blast_point = int(inp) if inp else BLASTPOINT
@@ -23,8 +24,8 @@ Input Strategy for {} (Player {})
 2. Baseline
 3. MCTS
 4. NN
-""".format(role, i+1)))-1
-        strategies.append(cur_strategy)
+""".format(role, i+1)))
+        strategies.append(cur_strategy-1)
 
     dealer_stategy = STRATEGY[strategies[0]]
     player_stategy = STRATEGY[strategies[1]]
