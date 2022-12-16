@@ -18,17 +18,17 @@ def score(state):
     return 0
 
 
-def get_player(state):
+def get_player(state, is_turn):
     p, dealer, player = state
-    p._turn = not p._turn
-    return  p._turn  # true->dealer, false->player
+    p._turn = not p._turn if is_turn else p._turn
+    return not p._turn  # true->dealer, false->player
 
 
 def children_of(state):
     children = []
     cp_state = copy.deepcopy(state)
     p, dealer, player = cp_state
-    if get_player(cp_state):
+    if get_player(cp_state, True):
         if dealer.point <= dealer._blast_point:
             if not dealer._is_stop:
                 # Hit
@@ -91,7 +91,7 @@ class Node:
         children = self.children()
 
         # negate utilities for min player "O"
-        sign = +1 if get_player(self.state) else -1
+        sign = +1 if get_player(self.state, False) else -1
 
         # empirical average child utilities
         # special case to handle 0 denominator for never-visited children
@@ -164,7 +164,6 @@ def MCTS(poker, player, dealer, is_dealer, is_auto):
     for r in range(num_rollouts):
         rollout2(node, is_dealer)
         #if r % (num_rollouts // 10) == 0: print(node.score_estimate, node.action)
-
     if node.action == 'H':
         cur_player.get(poker.next)
         print(role + ' get %s On hands\n %s' % (cur_player.cards_on_hand[-1],

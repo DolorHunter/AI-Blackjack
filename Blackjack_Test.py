@@ -13,6 +13,7 @@ NUM_TEST = 100
 STRATEGY = [manual, baseline, MCTS, NN]
 STRATEGY_HEADER = ["manual", "baseline", "MCTS", "NN"]
 
+
 def main():
     inp = input("Input Blast Point (defalut 21): ")
     blast_point = int(inp) if inp else BLASTPOINT
@@ -76,8 +77,8 @@ def main():
             plt.title("Dealer (Player 1) {} vs Player (Player 2) {} Size={}".format(dealer_stategy_header,
                                                                                     player_stategy_header,
                                                                                     blast_point))
-            plt.xlabel("Number of Test")
-            plt.ylabel("Node Sum")
+            plt.xlabel("Node Sum")
+            plt.ylabel("Times")
 
             plt.savefig("res/NodeSum {} vs {} Size{}".format(dealer_stategy_header, player_stategy_header, blast_point))
             plt.show()
@@ -93,8 +94,8 @@ def main():
             plt.title("Dealer (Player 1) {} vs Player (Player 2) {} Size={}".format(dealer_stategy_header,
                                                                                     player_stategy_header,
                                                                                     blast_point))
-            plt.xlabel("Number of Test")
-            plt.ylabel("Node Final Score")
+            plt.xlabel("Node Final Score")
+            plt.ylabel("Times")
             plt.savefig("res/FinScore {} vs {} Size{}".format(dealer_stategy_header, player_stategy_header, blast_point))
             plt.show()
 

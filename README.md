@@ -3,7 +3,7 @@
 ## Dependencies
 
 ```commandline
-$ pip install numpy matplotlib pytorch 
+$ pip install numpy matplotlib torch 
 ```
 
 ## Run
