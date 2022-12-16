@@ -21,7 +21,7 @@ def score(state):
 def get_player(state):
     p, dealer, player = state
     p._turn = not p._turn
-    return p._turn  # true->player, false->dealer
+    return  p._turn  # true->dealer, false->player
 
 
 def children_of(state):
@@ -160,7 +160,7 @@ def MCTS(poker, player, dealer, is_dealer, is_auto):
     state = poker, dealer, player
 
     node = Node(state)
-    num_rollouts = 1000
+    num_rollouts = 500
     for r in range(num_rollouts):
         rollout2(node, is_dealer)
         #if r % (num_rollouts // 10) == 0: print(node.score_estimate, node.action)
@@ -172,8 +172,10 @@ def MCTS(poker, player, dealer, is_dealer, is_auto):
     else:
         cur_player._is_stop = True
         print(role + ' stop')
+    return node.visit_count, node.score_estimate
 
 
+"""
 # TODO: increase number of rollouts to see effect on accuracy
 if __name__ == "__main__":
     p = Poker()
@@ -189,3 +191,4 @@ if __name__ == "__main__":
     for r in range(num_rollouts):
         rollout(node)
         if r % (num_rollouts // 10) == 0: print(r, node.score_estimate)
+"""

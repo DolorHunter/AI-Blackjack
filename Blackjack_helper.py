@@ -132,29 +132,38 @@ def run_game(blast_point, player_stategy, dealer_stategy, silence_mode, is_auto)
     print('dealer： %s' % dealer.str_cards_on_hand) if not silence_mode else None
     print('playerhand： %s' % player.str_cards_on_hand) if not silence_mode else None
 
+    dealer_node_ct, player_node_ct = [], []
+    dealer_node_score, player_node_score = 0, 0
+
     while player.is_alive and dealer.is_alive:
-        if not player.is_stop and p._turn:  # p1 not stop
-            player_stategy(p, player, dealer, False, is_auto)
+        if not dealer.is_stop and p._turn:  # p1 not stop
+            ret1 = dealer_stategy(p, player, dealer, True, is_auto)
+            if ret1:
+                node_ct, dealer_node_score = ret1
+                dealer_node_ct.append(node_ct)
             p._turn = not p._turn
-        elif not dealer.is_stop:  # p1 stop, p2 not stop
-            dealer_stategy(p, player, dealer, True, is_auto)
+        elif not player.is_stop:  # p1 stop, p2 not stop
+            ret2 = player_stategy(p, player, dealer, False, is_auto)
+            if ret2:
+                node_ct, player_node_score = ret2
+                player_node_ct.append(node_ct)
             p._turn = not p._turn
         else:  # p1, p2 stop
             # cmp
             print('Dealer point：%s \n Player point：%s' % (dealer.point_count(), player.point_count())) if not silence_mode else None
             if dealer.point_count() > player.point_count():
-                print('Dealer win') if not silence_mode else None
-                return 1
+                print('Dealer win. Dealer Score: 1. Player Score: -1.') if not silence_mode else None
+                return 1, sum(dealer_node_ct), sum(player_node_ct), dealer_node_score, player_node_score
             elif dealer.point_count() < player.point_count():
-                print('Player win') if not silence_mode else None
-                return -1
+                print('Player win. Dealer Score: -1. Player Score: 1.') if not silence_mode else None
+                return -1, sum(dealer_node_ct), sum(player_node_ct), dealer_node_score, player_node_score
             else:
-                print('Tie') if not silence_mode else None
-                return 0
+                print('Tie. Dealer Score: 0. Player Score: 0.') if not silence_mode else None
+                return 0, sum(dealer_node_ct), sum(player_node_ct), dealer_node_score, player_node_score
     else:  # p1 or p2 lost
         if not player.is_alive:
-            print('Player Blast , Dealer win') if not silence_mode else None
-            return 1
+            print('Player Blast, Dealer win. Dealer Score: 1. Player Score: -1.') if not silence_mode else None
+            return 1, sum(dealer_node_ct), sum(player_node_ct), dealer_node_score, player_node_score
         else:
-            print('Dealer blast, Player win ') if not silence_mode else None
-            return -1
+            print('Dealer blast, Player win. Dealer Score: -1. Player Score: 1.') if not silence_mode else None
+            return -1, sum(dealer_node_ct), sum(player_node_ct), dealer_node_score, player_node_score

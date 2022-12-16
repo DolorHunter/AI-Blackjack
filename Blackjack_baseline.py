@@ -1,6 +1,6 @@
 from Blackjack_helper import *
 
-THRESHOLD = 10
+THRESHOLD = 15
 
 
 def baseline(poker, player, dealer, is_dealer, is_auto):
