@@ -61,6 +61,7 @@ class Player(object):
         self._is_stop = False
         self._blast_point = blast_point
         self._action = None
+        self._score_estimate = 0
 
     @property
     def name(self):

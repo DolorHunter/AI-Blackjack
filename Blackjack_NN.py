@@ -130,9 +130,10 @@ def TreeNN(node, is_dealer):
     node.action = node.state[cur_player_index]._action
     is_dealer = 1 if is_dealer else 0
     action = 1 if node.action == 'H' else 0
-    inp = tr.tensor([dealer._point, player._point, action, dealer._blast_point, is_dealer], dtype=tr.float).to(device)
-    out = cnn(inp) #unf
-    return node.children()[np.argmax(out.detach().numpy())]
+    inp = tr.tensor([[dealer._point, player._point, action, dealer._blast_point, is_dealer]], dtype=tr.float).to(device)
+    out = float(cnn(inp))
+    node.state[cur_player_index].score_estimate = out
+    return node.children()[np.argmax(out)]
 
 
 # choose_child = exploit

@@ -16,6 +16,12 @@ Blackjack based on Blackjack_helper.py, it has all rules for Poker, Players and 
 $ python Blackjack.py
 ```
 
+If there is no model, run Blackjack_NN_helper first to create the model, then the model will be place in /model.
+
+```commandline
+$ python Blackjack_NN_helper.py
+```
+
 ## Test
 
 Test is a integrated experiment module, it will create combinations of all strategies and run all of the combination 100 times, and give some figures to show the result, including win rate figure, node counts distribution figure and final score distribution figure, if applicable. Figure will be saved in /res folder.
@@ -31,6 +37,7 @@ These are files and comments for the files.
 ```plain
 AI-Blackjack
 ├ /res                      # Folder for figures
+├ /model                    # Folder for NN model
 ├ Blackjack.py              # Main function
 ├ Blackjack_helper.py       # Helper for Blackjack
 ├ Blackjack_manual.py       # Manual mode
