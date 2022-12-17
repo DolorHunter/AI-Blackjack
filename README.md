@@ -3,7 +3,7 @@
 ## Dependencies
 
 ```commandline
-$ pip install numpy matplotlib torch 
+$ pip install numpy matplotlib torch==1.9.0+cu111 torchvision==0.10.0+cu111 torchaudio==0.9.0 -f https://download.pytorch.org/whl/torch_stable.html 
 ```
 
 ## Run
@@ -37,5 +37,6 @@ AI-Blackjack
 ├ Blackjack_baseline.py     # Baseline AI
 ├ Blackjack_MCTS.py         # MCTS Tree-based AI
 ├ Blackjack_NN.py           # TreeNN AI
+├ Blackjack_NN_helper.py    # Helper for TreeNN AI
 └ README.md                 # READ ME
 ```
