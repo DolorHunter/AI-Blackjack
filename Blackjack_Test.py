@@ -52,10 +52,10 @@ Input Strategy for {} (Player {})
 
         dealer_node_sum_list.append(dealer_node_sum) if strategies[0] == 2 or strategies[0] == 3 else None
         player_node_sum_list.append(player_node_sum) if strategies[1] == 2 or strategies[1] == 3 else None
-        dealer_node_score_list.append(dealer_node_score) if strategies[0] == 2 or strategies[0] == 3 else None
-        player_node_score_list.append(player_node_score) if strategies[1] == 2 or strategies[1] == 3 else None
-        dealer_node_score_list.append(score) if strategies[0] == 0 or strategies[1] == 1 else None
-        player_node_score_list.append(score) if strategies[1] == 0 or strategies[1] == 1 else None
+        dealer_node_score_list.append(dealer_node_score) if strategies[0] == 2 else None
+        player_node_score_list.append(player_node_score) if strategies[1] == 2 else None
+        dealer_node_score_list.append(score) if strategies[0] == 0 or strategies[1] == 1 or strategies[0] == 3 else None
+        player_node_score_list.append(score) if strategies[1] == 0 or strategies[1] == 1 or strategies[1] == 3 else None
 
     # draw result of test result
     keys = [i for i in range(NUM_TEST)]
@@ -74,10 +74,10 @@ Input Strategy for {} (Player {})
     plt.show()
 
     # node sum figure (tree based AI)
-    if strategies[0] == 2 or strategies[1] == 2:
-        if strategies[0] == 2:
+    if (strategies[0] == 2 or strategies[0] == 3) or (strategies[1] == 2 or strategies[1] == 3):
+        if strategies[0] == 2 or strategies[0] == 3:
             plt.hist(dealer_node_sum_list, label=dealer_strategy_header)
-        if strategies[1] == 2:
+        if strategies[1] == 2 or strategies[1] == 3:
             plt.hist(player_node_sum_list, label=player_strategy_header)
         plt.legend()
         plt.grid()
@@ -91,10 +91,11 @@ Input Strategy for {} (Player {})
         plt.show()
 
     # node final score figure (baseline AI and tree based AI)
-    if (strategies[0] == 1 or strategies[0] == 2) or (strategies[1] == 1 or strategies[1] == 2):
-        if strategies[0] == 1 or strategies[0] == 2:
+    if (strategies[0] == 1 or strategies[0] == 2 or strategies[0] == 3) or \
+            (strategies[1] == 1 or strategies[1] == 2 or strategies[1] == 3):
+        if strategies[0] == 1 or strategies[0] == 2 or strategies[0] == 3:
             plt.hist(dealer_node_score_list, label=dealer_strategy_header)
-        if strategies[1] == 1 or strategies[1] == 2:
+        if strategies[1] == 1 or strategies[1] == 2 or strategies[1] == 3:
             plt.hist(player_node_score_list, label=player_strategy_header)
         plt.legend()
         plt.grid()

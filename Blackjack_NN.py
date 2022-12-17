@@ -130,7 +130,7 @@ def TreeNN(node, is_dealer):
     node.action = node.state[cur_player_index]._action
     is_dealer = 1 if is_dealer else 0
     action = 1 if node.action == 'H' else 0
-    inp = tr.tensor([[dealer._point, player._point, action, dealer._blast_point, is_dealer]], dtype=tr.float).to(device)
+    inp = tr.tensor(np.array([[dealer._point, player._point, action, dealer._blast_point, is_dealer]]).reshape(1,5), dtype=tr.float).to(device)
     out = float(cnn(inp))
     node.state[cur_player_index].score_estimate = out
     return node.children()[np.argmax(out)]
@@ -159,6 +159,12 @@ def rollout2(node, is_dealer):
     else:
         best_child = choose_child2(node, is_dealer)
         result = rollout(best_child)
+    node.visit_count += 1
+    node.score_total += result# cur_player's score always convergence to +1
+    if is_dealer:
+        node.score_estimate = node.score_total / node.visit_count
+    else:
+        node.score_estimate = (-1)*node.score_total / node.visit_count
     cur_player_index = 1 if is_dealer else 2
     node.action = best_child.state[cur_player_index]._action
     node.score_estimate = best_child.state[cur_player_index].score_estimate
@@ -171,7 +177,7 @@ def NN(poker, player, dealer, is_dealer, is_auto):
     state = poker, dealer, player
 
     node = Node(state)
-    num_rollouts = 500
+    num_rollouts = 100
     for r in range(num_rollouts):
         rollout2(node, is_dealer)
         #if r % (num_rollouts // 10) == 0: print(node.score_estimate, node.action)
@@ -185,7 +191,7 @@ def NN(poker, player, dealer, is_dealer, is_auto):
     return node.visit_count, node.score_estimate
 
 
-
+"""
 # TODO: increase number of rollouts to see effect on accuracy
 if __name__ == "__main__":
     p = Poker()
@@ -201,4 +207,4 @@ if __name__ == "__main__":
     for r in range(num_rollouts):
         rollout2(node, p._turn)
         if r % (num_rollouts // 10) == 0: print(r, node.score_estimate)
-
+"""
