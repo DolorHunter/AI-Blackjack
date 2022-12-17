@@ -23,12 +23,12 @@ def main():
         cur_strategy = -1
         while cur_strategy < 1 or cur_strategy > 4:
             cur_strategy = int(input("""
-    Input Strategy for {} (Player {})
-    1. Manual
-    2. Baseline
-    3. MCTS
-    4. NN
-    """.format(role, i + 1)))
+Input Strategy for {} (Player {})
+1. Manual
+2. Baseline
+3. MCTS
+4. NN
+""".format(role, i + 1)))
         strategies.append(cur_strategy - 1)
 
     dealer_strategy = STRATEGY[strategies[0]]
@@ -59,54 +59,54 @@ def main():
         dealer_node_score_list.append(score) if strategies[0] == 0 or strategies[1] == 1 else None
         player_node_score_list.append(score) if strategies[1] == 0 or strategies[1] == 1 else None
 
-        # draw result of test result
-        keys = [i for i in range(NUM_TEST)]
-        # win rate figure
-        plt.figure()
-        plt.grid()
-        plt.plot(keys, dealer_win_rate, label=dealer_strategy_header)
-        plt.plot(keys, player_win_rate, label=player_strategy_header)
+    # draw result of test result
+    keys = [i for i in range(NUM_TEST)]
+    # win rate figure
+    plt.figure()
+    plt.grid()
+    plt.plot(keys, dealer_win_rate, label=dealer_strategy_header)
+    plt.plot(keys, player_win_rate, label=player_strategy_header)
+    plt.legend()
+    plt.title("Dealer (Player 1) {} vs Player (Player 2) {} Size={}".format(dealer_strategy_header,
+                                                                            player_strategy_header,
+                                                                            blast_point))
+    plt.xlabel("Number of Test")
+    plt.ylabel("Win Rate")
+    plt.savefig("res/WinRate {} vs {} Size{}".format(dealer_strategy_header, player_strategy_header, blast_point))
+    plt.show()
+
+    # node sum figure (tree based AI)
+    if strategies[0] == 2 or strategies[1] == 2:
+        if strategies[0] == 2:
+            plt.hist(dealer_node_sum_list, label=dealer_strategy_header)
+        if strategies[1] == 2:
+            plt.hist(player_node_sum_list, label=player_strategy_header)
         plt.legend()
+        plt.grid()
         plt.title("Dealer (Player 1) {} vs Player (Player 2) {} Size={}".format(dealer_strategy_header,
                                                                                 player_strategy_header,
                                                                                 blast_point))
-        plt.xlabel("Number of Test")
-        plt.ylabel("Win Rate")
-        plt.savefig("res/WinRate {} vs {} Size{}".format(dealer_strategy_header, player_strategy_header, blast_point))
+        plt.xlabel("Node Sum")
+        plt.ylabel("Times")
+
+        plt.savefig("res/NodeSum {} vs {} Size{}".format(dealer_strategy_header, player_strategy_header, blast_point))
         plt.show()
 
-        # node sum figure (tree based AI)
-        if strategies[0] == 2 or strategies[1] == 2:
-            if strategies[0] == 2:
-                plt.hist(dealer_node_sum_list, label=dealer_strategy_header)
-            if strategies[1] == 2:
-                plt.hist(player_node_sum_list, label=player_strategy_header)
-            plt.legend()
-            plt.grid()
-            plt.title("Dealer (Player 1) {} vs Player (Player 2) {} Size={}".format(dealer_strategy_header,
-                                                                                    player_strategy_header,
-                                                                                    blast_point))
-            plt.xlabel("Node Sum")
-            plt.ylabel("Times")
-
-            plt.savefig("res/NodeSum {} vs {} Size{}".format(dealer_strategy_header, player_strategy_header, blast_point))
-            plt.show()
-
-        # node final score figure (baseline AI and tree based AI)
-        if (strategies[0] == 1 or strategies[0] == 2) or (strategies[1] == 1 or strategies[1] == 2):
-            if strategies[0] == 1 or strategies[0] == 2:
-                plt.hist(dealer_node_score_list, label=dealer_strategy_header)
-            if strategies[1] == 1 or strategies[1] == 2:
-                plt.hist(player_node_score_list, label=player_strategy_header)
-            plt.legend()
-            plt.grid()
-            plt.title("Dealer (Player 1) {} vs Player (Player 2) {} Size={}".format(dealer_strategy_header,
-                                                                                    player_strategy_header,
-                                                                                    blast_point))
-            plt.xlabel("Node Final Score")
-            plt.ylabel("Times")
-            plt.savefig("res/FinScore {} vs {} Size{}".format(dealer_strategy_header, player_strategy_header, blast_point))
-            plt.show()
+    # node final score figure (baseline AI and tree based AI)
+    if (strategies[0] == 1 or strategies[0] == 2) or (strategies[1] == 1 or strategies[1] == 2):
+        if strategies[0] == 1 or strategies[0] == 2:
+            plt.hist(dealer_node_score_list, label=dealer_strategy_header)
+        if strategies[1] == 1 or strategies[1] == 2:
+            plt.hist(player_node_score_list, label=player_strategy_header)
+        plt.legend()
+        plt.grid()
+        plt.title("Dealer (Player 1) {} vs Player (Player 2) {} Size={}".format(dealer_strategy_header,
+                                                                                player_strategy_header,
+                                                                                blast_point))
+        plt.xlabel("Node Final Score")
+        plt.ylabel("Times")
+        plt.savefig("res/FinScore {} vs {} Size{}".format(dealer_strategy_header, player_strategy_header, blast_point))
+        plt.show()
 
 
 if __name__ == '__main__':
