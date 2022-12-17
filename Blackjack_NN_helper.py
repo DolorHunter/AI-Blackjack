@@ -120,9 +120,8 @@ def do_epochs(train_dataloader, test_dataloader, model, loss_fn, optimizer):
 device = "cuda" if tr.cuda.is_available() else "cpu"
 print(f"Using {device} device")
 
-# Two-layer CNN+linear network
 cnn = tr.nn.Sequential(
-    tr.nn.Linear(1, 10),  # Fully connected layer with 5 input units and 10 output units
+    tr.nn.Linear(5, 10),  # Fully connected layer with 5 input units and 10 output units
     tr.nn.ReLU(),  # ReLU activation layer
     tr.nn.Flatten(),
     tr.nn.Linear(10, 1)  # Fully connected layer with 10 input units and 1 output unit
