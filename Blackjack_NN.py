@@ -124,6 +124,7 @@ def uct(node):
 # TreeNN strategy to get best children
 def TreeNN(node, is_dealer):
     cnn.load_state_dict(tr.load("model/CNN.pkl"))
+    #cnn2.load_state_dict(tr.load("model/CNN2.pkl"))
     # input:  dealer._point, player._point, dealer._action, dealer._blast_point, is_dealer
     dealer, player = node.state[1], node.state[2]
     cur_player_index = 1 if is_dealer else 2

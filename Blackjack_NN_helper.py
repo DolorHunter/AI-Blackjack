@@ -126,6 +126,12 @@ cnn = tr.nn.Sequential(
     tr.nn.Flatten(),
     tr.nn.Linear(10, 1)  # Fully connected layer with 10 input units and 1 output unit
 ).to(device)
+cnn2 = tr.nn.Sequential(
+    tr.nn.Linear(5, 10),  # Fully connected layer with 5 input units and 10 output units
+    tr.nn.ELU(),  # ReLU activation layer
+    tr.nn.Flatten(),
+    tr.nn.Linear(10, 1)  # Fully connected layer with 10 input units and 1 output unit
+).to(device)
 
 
 if __name__ == '__main__':
@@ -144,8 +150,10 @@ if __name__ == '__main__':
     test_dataloader = DataLoader(test_dataset, batch_size=64, shuffle=True)
 
     train_loss_list, test_loss_list = do_epochs(train_dataloader, test_dataloader, cnn, loss_fn, optimizer)
+    #train_loss_list, test_loss_list = do_epochs(train_dataloader, test_dataloader, cnn2, loss_fn, optimizer)
 
     tr.save(cnn.state_dict(), 'model/CNN.pkl')
+    #tr.save(cnn.state_dict(), 'model/CNN2.pkl')
 
     # Training and Testing Error
     plt.figure()
